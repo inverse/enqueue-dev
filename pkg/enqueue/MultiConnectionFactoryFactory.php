@@ -11,7 +11,7 @@ final class ConnectionFactoryFactory extends BaseConnectionFactoryFactory implem
     {
         $this->validate($config);
 
-        $dsns = Dsn::parse($config);
+        $dsns = Dsn::parse($config['dsn']);
 
         if (!empty($dsns)) {
             throw new \InvalidArgumentException('Config contained no valid DSN');
