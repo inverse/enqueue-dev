@@ -3,10 +3,16 @@
 namespace Enqueue;
 
 use Enqueue\Dsn\Dsn;
+use Enqueue\Strategy\StrategyInterface;
 use Interop\Queue\ConnectionFactory;
 
-final class ConnectionFactoryFactory extends BaseConnectionFactoryFactory implements ConnectionFactoryFactoryInterface
+final class MultiConnectionFactoryFactory extends BaseConnectionFactoryFactory implements ConnectionFactoryFactoryInterface
 {
+    /**
+     * @var StrategyInterface
+     */
+    private $strategy;
+
     public function create($config): ConnectionFactory
     {
         $this->validate($config);
@@ -17,7 +23,7 @@ final class ConnectionFactoryFactory extends BaseConnectionFactoryFactory implem
             throw new \InvalidArgumentException('Config contained no valid DSN');
         }
 
-        $dsn = array_rand($dsns);
+        $dsn = $this->strategy->select($dsns);
 
         return $this->create($dsn, $config);
     }
